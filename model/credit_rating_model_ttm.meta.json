@@ -1,0 +1,30 @@
+{
+  "version": "1.01",
+  "trained_on": "2026-02-20",
+  "training_n": 2727,
+  "threshold": 0.5,
+  "features": [
+    "ebitda_margin",
+    "net_margin",
+    "roa",
+    "roe",
+    "operating_margin",
+    "debt_to_equity",
+    "debt_to_assets",
+    "leverage_ratio",
+    "current_ratio",
+    "workingcapital_ratio",
+    "cash_ratio",
+    "ocf_to_debt",
+    "fcf_margin",
+    "receivables_turnover",
+    "inventory_turnover",
+    "asset_turnover",
+    "cash_x_wcap",
+    "ocf_x_debt",
+    "margin_x_roa",
+    "altman_z"
+  ],
+  "notes": "initial model, TTM features only",
+  "model_version_id": 1
+}
