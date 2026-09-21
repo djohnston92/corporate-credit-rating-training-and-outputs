@@ -1,7 +1,7 @@
 {
   "version": "1.01",
-  "trained_on": "2026-02-20",
-  "training_n": 2727,
+  "trained_on": "2026-09-20",
+  "training_n": 2890,
   "threshold": 0.5,
   "features": [
     "ebitda_margin",
@@ -25,6 +25,5 @@
     "margin_x_roa",
     "altman_z"
   ],
-  "notes": "initial model, TTM features only",
-  "model_version_id": 1
+  "notes": "initial model, TTM features only"
 }

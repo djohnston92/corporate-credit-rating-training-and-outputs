@@ -8,7 +8,7 @@ import numpy as np
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
-load_dotenv()
+load_dotenv("/home/dad/Documents/Python_Projects/.env")
 
 MODEL_DIR = Path(__file__).parent.parent / "model"
 
@@ -21,7 +21,18 @@ engine = create_engine(
 )
 
 # Tickers to score — swap for a real query (e.g. against a tickers table) as needed.
-tickers = ['ORCL']
+
+
+
+
+source_codes_query = """
+select symbol from bronze.yahoo_finance_consolidated_tickers_vw
+"""
+source_codes_df = pd.read_sql(source_codes_query, engine)
+tickers = source_codes_df['symbol'].tolist()
+
+
+# tickers = ['ORCL']
 
 
 def engineer_financial_ratios(df):
@@ -109,7 +120,7 @@ for ticker in tickers:
         SELECT "date" AS date
         FROM python.ml_corporate_credit_ratings_financials_mv
         WHERE "TICKER" = '{ticker}'
-          AND "date" >= '2019-03-31'
+          AND "date" >= '2000-01-01'
         GROUP BY "date"
     """
     df_report_date = pd.read_sql(date_query, engine)

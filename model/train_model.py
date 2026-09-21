@@ -15,9 +15,8 @@ import joblib
 import json
 from datetime import date
 
-load_dotenv()
-
 OUT_DIR = Path(__file__).parent
+load_dotenv("/home/dad/Documents/Python_Projects/.env")
 
 # ── DB ────────────────────────────────────────────────────────────────────────
 engine = create_engine(
@@ -206,7 +205,7 @@ plt.title('Confusion Matrix')
 plt.savefig(OUT_DIR / 'confusion_matrix.png')
 print(f"\nSaved {OUT_DIR / 'confusion_matrix.png'}")
 
-# ── SAVE ARTIFACTS ─────────────────────────────────────────────────────────────
+#── SAVE ARTIFACTS ─────────────────────────────────────────────────────────────
 meta = {
     "version": "1.01",
     "trained_on": str(date.today()),
