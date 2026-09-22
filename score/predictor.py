@@ -25,14 +25,14 @@ engine = create_engine(
 
 
 
-# source_codes_query = """
-# select symbol from bronze.yahoo_finance_consolidated_tickers_vw
-# """
-# source_codes_df = pd.read_sql(source_codes_query, engine)
-# tickers = source_codes_df['symbol'].tolist()
+source_codes_query = """
+select symbol from bronze.yahoo_finance_consolidated_tickers_vw
+"""
+source_codes_df = pd.read_sql(source_codes_query, engine)
+tickers = source_codes_df['symbol'].tolist()
 
 
-tickers = ['AMD']
+# tickers = ['AMD']
 
 
 def engineer_financial_ratios(df):
