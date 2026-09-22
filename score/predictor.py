@@ -25,14 +25,14 @@ engine = create_engine(
 
 
 
-source_codes_query = """
-select symbol from bronze.yahoo_finance_consolidated_tickers_vw
-"""
-source_codes_df = pd.read_sql(source_codes_query, engine)
-tickers = source_codes_df['symbol'].tolist()
+# source_codes_query = """
+# select symbol from bronze.yahoo_finance_consolidated_tickers_vw
+# """
+# source_codes_df = pd.read_sql(source_codes_query, engine)
+# tickers = source_codes_df['symbol'].tolist()
 
 
-# tickers = ['ORCL']
+tickers = ['AMD']
 
 
 def engineer_financial_ratios(df):
@@ -104,12 +104,14 @@ feature_cols = [
     "cash_x_wcap", "ocf_x_debt", "margin_x_roa", "altman_z",
 ]
 
-# class index -> probability column name; matches label_encoder.classes_ order
+# class name -> probability column name. Keyed by the actual class string, not a
+# positional index -- predict_proba() returns columns in clf.classes_ order, which
+# is whatever order LabelEncoder assigned (alphabetical), not this dict's order.
 PROB_COL_MAP = {
-    0: 'prob_high_risk',
-    1: 'prob_speculative',
-    2: 'prob_low_invest',
-    3: 'prob_ig',
+    'High Risk Approaching Default 🔴': 'prob_high_risk',
+    'Investment Grade 🟢': 'prob_ig',
+    'Low Investment / Upper Speculative 🔵': 'prob_low_invest',
+    'Speculative Grade 🟡': 'prob_speculative',
 }
 
 CONFIDENCE_THRESHOLD = 0.51  # below this, flag the prediction as low-confidence
@@ -147,10 +149,19 @@ for ticker in tickers:
 
         pred_proba = clf.predict_proba(row_df.iloc[[0]])[0]
 
-        high_risk_prob   = pred_proba[0] if len(pred_proba) > 0 else 0.0
-        prob_speculative = pred_proba[1] if len(pred_proba) > 1 else 0.0
-        prob_low_invest  = pred_proba[2] if len(pred_proba) > 2 else 0.0
-        prob_ig          = pred_proba[3] if len(pred_proba) > 3 else 0.0
+        # Map probabilities to named columns by actual class name (see PROB_COL_MAP
+        # above) rather than a hardcoded position -- clf.classes_ is the same order
+        # label_encoder fit the classes in, whatever that order turns out to be.
+        class_probs = dict(zip(label_encoder.classes_, pred_proba))
+        col_probs = {col: 0.0 for col in PROB_COL_MAP.values()}
+        for class_name, col_name in PROB_COL_MAP.items():
+            if class_name in class_probs:
+                col_probs[col_name] = class_probs[class_name]
+
+        high_risk_prob   = col_probs['prob_high_risk']
+        prob_speculative = col_probs['prob_speculative']
+        prob_low_invest  = col_probs['prob_low_invest']
+        prob_ig          = col_probs['prob_ig']
 
         flag = pred_proba.max() < CONFIDENCE_THRESHOLD
 
